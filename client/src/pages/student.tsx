@@ -21,7 +21,15 @@ function Student() {
   }, []);
 
   const onSelectStudent = (newStudent: IStudent | undefined) => {
-    api.get(`/questions/${newStudent?.student_id}`).then((response) => {
+    if (!newStudent) {
+      setStudent(undefined);
+      setQuestions([]);
+      setTeachers([]);
+      setRatings([]);
+      return;
+    }
+
+    api.get(`/questions`).then((response) => {
       console.log("Questions");
       console.log(response.data);
       setQuestions(response.data);
@@ -33,7 +41,7 @@ function Student() {
       setTeachers(response.data);
     });
 
-    api.get(`/ratings/${newStudent?.student_id}`).then((response) => {
+    api.get(`/ratings/students/${newStudent?.student_id}`).then((response) => {
       console.log("Rating");
       console.log(response.data);
       setRatings(response.data);
@@ -62,6 +70,9 @@ function Student() {
           )
         }
       >
+        <option key={-1} value={-1} id={"-1"}>
+          None
+        </option>
         {studentOptions.map((student) => {
           return (
             <option
@@ -116,12 +127,24 @@ function Student() {
                                 onChange={async (e) => {
                                   console.log(e.target.value);
 
-                                  await api.put("/rate", {
+                                  const response = await api.put("/rate", {
                                     student_id: student?.student_id,
                                     teacher_id: teacher.id,
                                     question_id: question.id,
                                     grade: parseInt(e.target.value),
                                   });
+
+                                  if (response.status === 200) {
+                                    setRatings((oldRatings) => [
+                                      ...oldRatings,
+                                      {
+                                        student_id: student?.student_id,
+                                        teacher_id: teacher.id,
+                                        question_id: question.id,
+                                        grade: parseInt(e.target.value),
+                                      },
+                                    ]);
+                                  }
                                 }}
                               >
                                 <option

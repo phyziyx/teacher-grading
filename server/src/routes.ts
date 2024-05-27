@@ -8,12 +8,12 @@ router.get('/students', async (req: Request, res: Response) => {
 	res.send(students);
 });
 
-router.get('/:studentId', (req: Request, res: Response) => {
-	const studentId = req.params.studentId;
-	res.send(`Hello, student ${studentId}`);
+router.get('/teachers', async (req: Request, res: Response) => {
+	const teachers = await teacherModel.find();
+	res.json(teachers);
 });
 
-router.get('/questions/:studentId', async (req: Request, res: Response) => {
+router.get('/questions/', async (req: Request, res: Response) => {
 	const questions = await questionModel.find();
 	res.json(questions);
 });
@@ -28,9 +28,15 @@ router.get('/assigned/:studentId', async (req: Request, res: Response) => {
 	res.json(teachers);
 });
 
-router.get('/ratings/:studentId', async (req: Request, res: Response) => {
+router.get('/ratings/students/:studentId', async (req: Request, res: Response) => {
 	const studentId = req.params.studentId;
 	const ratings = await ratingModel.find({ student_id: studentId });
+	res.json(ratings);
+});
+
+router.get('/ratings/teachers/:teacherId', async (req: Request, res: Response) => {
+	const teacherId = req.params.teacherId;
+	const ratings = await ratingModel.find({ teacher_id: teacherId });
 	res.json(ratings);
 });
 

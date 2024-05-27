@@ -20,7 +20,7 @@ const routes: MyRouteObject[] = [
     path: "student",
     element: <Student />,
   },
-];
+] as const;
 
 const router = createBrowserRouter(routes);
 
