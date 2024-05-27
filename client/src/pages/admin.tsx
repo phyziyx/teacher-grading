@@ -8,7 +8,6 @@ function Admin() {
   const [teacher, setTeacher] = useState<ITeacher>();
   const [teachers, setTeachers] = useState<ITeacher[]>([]);
   const [ratings, setRatings] = useState<IRating[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [questions, setQuestions] = useState<IQuestion[]>([]);
 
   useEffect(() => {
@@ -16,7 +15,6 @@ function Admin() {
       console.log("Teachers");
       console.log(response.data);
       setTeachers(response.data);
-      setLoading(false);
     });
 
     api.get("/questions").then((response) => {
