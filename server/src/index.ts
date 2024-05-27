@@ -12,8 +12,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/', router);
 
-mongoose.connect('mongodb://localhost:27017/project');
-
-app.listen(port, () => {
-	console.log(`Server running at http://localhost:${port}/`);
+mongoose.connect('mongodb://localhost:27017/project').then(() => {
+	app.listen(port, () => {
+		console.log(`Server running at http://localhost:${port}/`);
+	});
+}).catch((error) => {
+	console.error(error);
 });

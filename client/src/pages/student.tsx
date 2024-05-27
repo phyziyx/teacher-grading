@@ -1,53 +1,33 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../utils/api";
-import { IQuestion, IRating, IStudent, ITeacher } from "../types";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getQuestions,
+  getStudents,
+  getTeachers,
+  setActiveStudent,
+} from "../redux/slices";
+import { AppDispatch, RootState } from "../redux/store";
+import { IStudent } from "../types";
 
 function Student() {
-  const [student, setStudent] = useState<IStudent>();
-  const [studentOptions, setStudentOptions] = useState<IStudent[]>([]);
-  const [questions, setQuestions] = useState<IQuestion[]>([]);
-  const [teachers, setTeachers] = useState<ITeacher[]>([]);
-  const [ratings, setRatings] = useState<IRating[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { loading, students, questions, activeStudent, teachers, error } =
+    useSelector((state: RootState) => state.grading);
+
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    api.get("/students").then((response) => {
-      console.log("Students");
-      console.log(response.data);
-      setStudentOptions(response.data);
-      setLoading(false);
-    });
-  }, []);
+    dispatch(getStudents());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(getQuestions());
+    dispatch(getTeachers());
+  }, [activeStudent, dispatch]);
 
   const onSelectStudent = (newStudent: IStudent | undefined) => {
-    if (!newStudent) {
-      setStudent(undefined);
-      setQuestions([]);
-      setTeachers([]);
-      setRatings([]);
-      return;
-    }
-
-    api.get(`/questions`).then((response) => {
-      console.log("Questions");
-      console.log(response.data);
-      setQuestions(response.data);
-    });
-
-    api.get(`/assigned/${newStudent?.student_id}`).then((response) => {
-      console.log("Assigned");
-      console.log(response.data);
-      setTeachers(response.data);
-    });
-
-    api.get(`/ratings/students/${newStudent?.student_id}`).then((response) => {
-      console.log("Rating");
-      console.log(response.data);
-      setRatings(response.data);
-    });
-
-    setStudent(newStudent);
+    dispatch(setActiveStudent(newStudent));
   };
 
   return (
@@ -57,30 +37,27 @@ function Student() {
       <br />
       <h2>
         Student:{" "}
-        {student
-          ? `${student?.first_name} ${student?.last_name} (ID: ${student?.student_id})`
+        {activeStudent
+          ? `${activeStudent?.name} (ID: ${activeStudent?.regno})`
           : ""}
       </h2>
       <select
+        key={""}
         disabled={loading}
-        value={student?.student_id}
+        value={activeStudent?.student_id}
         onChange={(e) =>
           onSelectStudent(
-            studentOptions.find((s) => String(s.student_id) === e.target.value)
+            students.find((s) => s.student_id === parseInt(e.target.value))
           )
         }
       >
         <option key={-1} value={-1} id={"-1"}>
           None
         </option>
-        {studentOptions.map((student) => {
+        {students.map((student) => {
           return (
-            <option
-              key={student.student_id}
-              value={student.student_id}
-              id={String(student.student_id)}
-            >
-              {student.first_name} {student.last_name}
+            <option key={student.student_id} value={student.student_id}>
+              {student.name}
             </option>
           );
         })}
@@ -98,9 +75,7 @@ function Student() {
                 <tr>
                   <th>Teacher Name</th>
                 </tr>
-                <tr>
-                  {teacher.first_name} {teacher.last_name}
-                </tr>
+                <tr>{teacher.name}</tr>
 
                 <tr>
                   <td>
@@ -110,55 +85,57 @@ function Student() {
                         <th>Choices</th>
                       </tr>
                       {questions.map((question) => {
-                        const rate =
-                          ratings &&
-                          ratings.find(
-                            (r) =>
-                              r.question_id === question.id &&
-                              r.teacher_id === teacher.id
-                          );
+                        const rate = false;
+                        // ratings &&
+                        // ratings.find(
+                        //   (r) =>
+                        //     r.question_id === question.id &&
+                        //     r.teacher_id === teacher.id
+                        // );
 
                         return (
-                          <tr>
+                          <tr key={question.id}>
                             <td>{question.question}</td>
                             <td>
                               <select
+                                key={question.id}
                                 disabled={!!rate}
                                 onChange={async (e) => {
                                   console.log(e.target.value);
 
                                   const response = await api.put("/rate", {
-                                    student_id: student?.student_id,
+                                    student_id: activeStudent?.student_id,
                                     teacher_id: teacher.id,
                                     question_id: question.id,
                                     grade: parseInt(e.target.value),
                                   });
 
-                                  if (response.status === 200) {
-                                    setRatings((oldRatings) => [
-                                      ...oldRatings,
-                                      {
-                                        student_id: student?.student_id,
-                                        teacher_id: teacher.id,
-                                        question_id: question.id,
-                                        grade: parseInt(e.target.value),
-                                      },
-                                    ]);
-                                  }
+                                  // if (response.status === 200) {
+                                  //   setRatings((oldRatings) => [
+                                  //     ...oldRatings,
+                                  //     {
+                                  //       student_id: activeStudent?.id,
+                                  //       teacher_id: teacher.id,
+                                  //       question_id: question.id,
+                                  //       grade: parseInt(e.target.value),
+                                  //     },
+                                  //   ]);
+                                  // }
                                 }}
                               >
                                 <option
                                   selected={
-                                    rate === undefined || rate.grade === -1
+                                    rate === undefined || rate === false
                                   }
                                   value={-1}
+                                  key={-1}
                                 >
                                   Select...
                                 </option>
                                 {question.choices.map((choice, index) => {
                                   return (
                                     <option
-                                      selected={rate?.grade === index}
+                                      selected={rate === false}
                                       value={index}
                                       key={index}
                                     >
@@ -180,6 +157,7 @@ function Student() {
           );
         })
       )}
+      <pre>{error}</pre>
     </>
   );
 }

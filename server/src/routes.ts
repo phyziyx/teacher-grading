@@ -18,15 +18,13 @@ router.get('/questions/', async (req: Request, res: Response) => {
 	res.json(questions);
 });
 
-router.get('/assigned/:studentId', async (req: Request, res: Response) => {
-	const studentId = req.params.studentId;
-
-	const classes = await classModel.find({ students: studentId });
-	const teacherIds = classes.map(cls => cls.teacher_id);
-	const teachers = await teacherModel.find({ id: { $in: teacherIds } });
-
-	res.json(teachers);
-});
+// router.get('/assigned/:studentId', async (req: Request, res: Response) => {
+// 	const studentId = req.params.studentId;
+// 	const classes = await classModel.find({ students: studentId });
+// 	const teacherIds = classes.map(cls => cls.teacher_id);
+// 	const teachers = await teacherModel.find({ id: { $in: teacherIds } });
+// 	res.json(teachers);
+// });
 
 router.get('/ratings/students/:studentId', async (req: Request, res: Response) => {
 	const studentId = req.params.studentId;
