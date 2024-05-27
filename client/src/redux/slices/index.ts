@@ -75,7 +75,7 @@ export const gradingSlice = createSlice({
 			})
 			.addCase(getTeachers.fulfilled, (state, { payload }) => {
 				state.loading = false;
-				state.questions = payload;
+				state.teachers = payload;
 			})
 			.addCase(getTeachers.rejected, (state, { payload }) => {
 				state.loading = false;
