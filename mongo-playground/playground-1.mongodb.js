@@ -4,109 +4,10 @@
 
 const database = 'project';
 
-const questions = 'questions';
-const students = 'students';
-const teachers = 'teachers';
-const classes = 'classes';
-
 // Create a new database.
 use(database);
 
-// Create a new collection.
-db.createCollection(questions);
-db.createCollection(students);
-db.createCollection(teachers);
-db.createCollection(classes);
-
-db.getCollection(classes).insertMany([
-	{
-		"id": 1,
-		"teacher_id": 1,
-		"students": [1, 2, 3]
-	},
-	{
-		"id": 2,
-		"teacher_id": 2,
-		"students": [2, 3, 4]
-	},
-	{
-		"id": 3,
-		"teacher_id": 3,
-		"students": [3, 4, 5]
-	},
-	{
-		"id": 4,
-		"teacher_id": 4,
-		"students": [4, 5, 1]
-	},
-	{
-		"id": 5,
-		"teacher_id": 5,
-		"students": [5, 1, 2]
-	}
-]);
-
-db.getCollection(teachers).insertMany([
-	{
-		"id": 1,
-		"first_name": "John",
-		"last_name": "Doe",
-		"subject": "Mathematics"
-	},
-	{
-		"id": 2,
-		"first_name": "Jane",
-		"last_name": "Smith",
-		"subject": "English"
-	},
-	{
-		"id": 3,
-		"first_name": "Robert",
-		"last_name": "Brown",
-		"subject": "History"
-	},
-	{
-		"id": 4,
-		"first_name": "Emily",
-		"last_name": "Davis",
-		"subject": "Biology"
-	},
-	{
-		"id": 5,
-		"first_name": "Michael",
-		"last_name": "Wilson",
-		"subject": "Chemistry"
-	}
-]);
-
-db.getCollection(students).insertMany([
-	{
-		"student_id": 1,
-		"first_name": "Alice",
-		"last_name": "Smith"
-	},
-	{
-		"student_id": 2,
-		"first_name": "Bob",
-		"last_name": "Johnson"
-	},
-	{
-		"student_id": 3,
-		"first_name": "Charlie",
-		"last_name": "Brown"
-	},
-	{
-		"student_id": 4,
-		"first_name": "David",
-		"last_name": "Williams"
-	},
-	{
-		"student_id": 5,
-		"first_name": "Eva",
-		"last_name": "Davis"
-	}
-]);
-
+const questions = 'questions';
 db.getCollection(questions).insertMany([
 	{
 		"id": 1,
@@ -135,33 +36,188 @@ db.getCollection(questions).insertMany([
 	}
 ]);
 
-// The prototype form to create a collection:
-/* db.createCollection( <name>,
-  {
-	capped: <boolean>,
-	autoIndexId: <boolean>,
-	size: <number>,
-	max: <number>,
-	storageEngine: <document>,
-	validator: <document>,
-	validationLevel: <string>,
-	validationAction: <string>,
-	indexOptionDefaults: <document>,
-	viewOn: <string>,
-	pipeline: <pipeline>,
-	collation: <document>,
-	writeConcern: <document>,
-	timeseries: { // Added in MongoDB 5.0
-	  timeField: <string>, // required for time series collections
-	  metaField: <string>,
-	  granularity: <string>,
-	  bucketMaxSpanSeconds: <number>, // Added in MongoDB 6.3
-	  bucketRoundingSeconds: <number>, // Added in MongoDB 6.3
+const students = 'students';
+db.getCollection(students).insertMany([
+	{
+		"student_id": 1,
+		"name": "Alice Smith",
+		"regno": "240001"
 	},
-	expireAfterSeconds: <number>,
-	clusteredIndex: <document>, // Added in MongoDB 5.3
-  }
-)*/
+	{
+		"student_id": 2,
+		"name": "Bob Johnson",
+		"regno": "240002"
+	},
+	{
+		"student_id": 3,
+		"name": "Charlie Brown",
+		"regno": "240003"
+	},
+	{
+		"student_id": 4,
+		"name": "David Williams",
+		"regno": "240004"
+	},
+	{
+		"student_id": 5,
+		"name": "Eva Davis",
+		"regno": "240005"
+	}
+]);
 
-// More information on the `createCollection` command can be found at:
-// https://www.mongodb.com/docs/manual/reference/method/db.createCollection/
+const teachers = 'teachers';
+db.getCollection(teachers).insertMany([
+	{
+		"id": 1,
+		"name": "John Doe",
+	},
+	{
+		"id": 2,
+		"name": "Jane Smith",
+	},
+	{
+		"id": 3,
+		"name": "Robert Brown",
+	},
+	{
+		"id": 4,
+		"name": "Emily Davis",
+	},
+	{
+		"id": 5,
+		"name": "Michael Wilson",
+	}
+]);
+
+const classes = 'classes';
+db.getCollection(classes).insertMany([
+	{
+		"id": 1,
+		"semester": 1,
+		"section": "A"
+	},
+	{
+		"id": 2,
+		"semester": 1,
+		"section": "B"
+	},
+	{
+		"id": 3,
+		"semester": 2,
+		"section": "A"
+	},
+	{
+		"id": 4,
+		"semester": 2,
+		"section": "B"
+	},
+	{
+		"id": 5,
+		"semester": 3,
+		"section": "A"
+	},
+	{
+		"id": 6,
+		"semester": 3,
+		"section": "B"
+	}
+]);
+
+const assigned = 'assigned';
+db.getCollection(assigned).insertMany([
+	{
+		"class_id": 1,
+		"teacher_id": 1,
+	},
+	{
+		"class_id": 1,
+		"teacher_id": 2,
+	},
+	{
+		"class_id": 2,
+		"teacher_id": 2,
+	},
+	{
+		"class_id": 2,
+		"teacher_id": 3,
+	},
+	{
+		"class_id": 3,
+		"teacher_id": 3,
+	},
+	{
+		"class_id": 3,
+		"teacher_id": 4,
+	},
+	{
+		"class_id": 4,
+		"teacher_id": 4,
+	},
+	{
+		"class_id": 4,
+		"teacher_id": 5,
+	},
+	{
+		"class_id": 5,
+		"teacher_id": 5,
+	},
+	{
+		"class_id": 5,
+		"teacher_id": 1,
+	}
+]);
+
+const enrolled = 'enrolled';
+db.getCollection(enrolled).insertMany([
+	{
+		"student_id": 1,
+		"class_id": 1
+	},
+	{
+		"student_id": 1,
+		"class_id": 2
+	},
+	{
+		"student_id": 2,
+		"class_id": 2
+	},
+	{
+		"student_id": 2,
+		"class_id": 3
+	},
+	{
+		"student_id": 3,
+		"class_id": 3
+	},
+	{
+		"student_id": 3,
+		"class_id": 4
+	},
+	{
+		"student_id": 4,
+		"class_id": 4
+	},
+	{
+		"student_id": 4,
+		"class_id": 5
+	},
+	{
+		"student_id": 5,
+		"class_id": 5
+	},
+	{
+		"student_id": 5,
+		"class_id": 1
+	}
+]);
+
+const ratings = 'ratings';
+db.getCollection(ratings).insertOne([
+	{
+		"student_id": 1,
+		"teacher_id": 1,
+		"question_id": 1,
+		"grade": "Good"
+	}
+]);
+db.getCollection(ratings).deleteMany({});
