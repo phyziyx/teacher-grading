@@ -1,11 +1,45 @@
 import express, { Request, Response } from 'express';
-import { studentModel, questionModel, classModel, teacherModel, ratingModel } from './models';
+import { studentModel, questionModel, classModel, teacherModel, ratingModel, enrollmentModel } from './models';
 
 const router = express.Router();
 
-router.get('/students', async (req: Request, res: Response) => {
+router.get('/students/', async (req: Request, res: Response) => {
 	const students = await studentModel.find();
 	res.send(students);
+});
+
+router.get('/students/:studentId', async (req: Request, res: Response) => {
+	const studentId = req.params.studentId;
+
+	const student = await enrollmentModel.aggregate([
+		{
+			$match: { student_id: Number(studentId) }
+		},
+		{
+			$lookup: {
+				from: "assigned",
+				localField: "class_id",
+				foreignField: "class_id",
+				as: "assignedClasses"
+			},
+		},
+		{
+			$lookup: {
+				from: "teachers",
+				localField: "assignedClasses.teacher_id",
+				foreignField: "id",
+				as: "teacherDetails"
+			},
+		},
+		{
+			$unwind: "$teacherDetails"
+		},
+		{
+			$unwind: "$assignedClasses"
+		}
+	]);
+
+	res.send(student);
 });
 
 router.get('/teachers', async (req: Request, res: Response) => {

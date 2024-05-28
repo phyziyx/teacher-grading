@@ -8,7 +8,7 @@ const questionSchema = new Schema({
 export const questionModel = mongoose.model('Questions', questionSchema);
 
 const studentSchema = new Schema({
-	id: Number,
+	student_id: Number,
 	name: String,
 	regno: String
 });
@@ -31,13 +31,13 @@ const assignedSchema = new Schema({
 	teacher_id: Number,
 	class_id: Number
 });
-export const assignedModel = mongoose.model('Assigned', assignedSchema);
+export const assignedModel = mongoose.model('Assigneds', assignedSchema);
 
-const enrolledSchema = new Schema({
+const enrollmentSchema = new Schema({
 	student_id: Number,
 	class_id: Number
 });
-export const enrolledModel = mongoose.model('Enrolled', enrolledSchema);
+export const enrollmentModel = mongoose.model('Enrollments', enrollmentSchema);
 
 const ratingSchema = new Schema({
 	student_id: Number,

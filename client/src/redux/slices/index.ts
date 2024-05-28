@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { api } from "../../utils/api";
 import { IQuestion, IStudent, ITeacher } from "../../types";
 
-interface SemesterState {
+interface GradingSlice {
 	loading: boolean;
 	error: string;
 	students: IStudent[];
@@ -11,7 +11,7 @@ interface SemesterState {
 	teachers: ITeacher[];
 }
 
-const initialState: SemesterState = {
+const initialState: GradingSlice = {
 	loading: false,
 	error: "",
 	students: [],
@@ -19,20 +19,35 @@ const initialState: SemesterState = {
 	questions: [],
 	teachers: []
 };
-
+/**
+ * Fetches the list of students that exist
+ */
 export const getStudents = createAsyncThunk("grading/students", async () => {
 	const response = await api.get(`/students`);
 	return response.data as IStudent[];
 });
 
+/**
+ * Fetches the list of classes and teachers that are related to that student
+ */
+export const getStudent = createAsyncThunk("grading/student", async (id: number) => {
+	const response = await api.get(`/students/${id}`);
+	return response.data as IStudent;
+});
+
+/**
+ * Fetches the set of the questions that the students get to assess their teacher on
+ */
 export const getQuestions = createAsyncThunk("grading/questions", async () => {
 	const response = await api.get(`/questions`);
 	return response.data as IQuestion[];
 });
 
+/**
+ * Fetches the list of all teachers that exist
+ */
 export const getTeachers = createAsyncThunk("grading/teachers", async () => {
 	const response = await api.get(`/teachers`);
-	console.log(response.data);
 	return response.data as ITeacher[];
 });
 

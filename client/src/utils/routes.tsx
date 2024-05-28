@@ -1,6 +1,6 @@
-import Admin from "../pages/admin";
-import Home from "../pages/home";
-import Student from "../pages/student";
+import Home from "../pages/Home";
+import Admin from "../pages/Admin";
+import Student from "../pages/Student";
 import { MyRouteObject } from "../types";
 
 const routes: MyRouteObject[] = [

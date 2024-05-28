@@ -7,6 +7,8 @@ const database = 'project';
 // Create a new database.
 use(database);
 
+// db.getCollection('enrolled').renameCollection('enrollments');
+
 const questions = 'questions';
 db.getCollection(questions).insertMany([
 	{
@@ -123,8 +125,8 @@ db.getCollection(classes).insertMany([
 	}
 ]);
 
-const assigned = 'assigned';
-db.getCollection(assigned).insertMany([
+const assigneds = 'assigneds';
+db.getCollection(assigneds).insertMany([
 	{
 		"class_id": 1,
 		"teacher_id": 1,
@@ -167,7 +169,7 @@ db.getCollection(assigned).insertMany([
 	}
 ]);
 
-const enrolled = 'enrolled';
+const enrollments = 'enrollments';
 db.getCollection(enrolled).insertMany([
 	{
 		"student_id": 1,
