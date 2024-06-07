@@ -86,18 +86,6 @@ export const studentSlice = createSlice({
 				state.error = payload as string;
 			})
 			//
-			// .addCase(getTeachers.pending, (state) => {
-			// 	state.loading = true;
-			// })
-			// .addCase(getTeachers.fulfilled, (state, { payload }) => {
-			// 	state.loading = false;
-			// 	state.teachers = payload;
-			// })
-			// .addCase(getTeachers.rejected, (state, { payload }) => {
-			// 	state.loading = false;
-			// 	state.error = payload as string;
-			// })
-			//
 			.addCase(getTeacherReview.pending, (state) => {
 				state.loading = true;
 			})

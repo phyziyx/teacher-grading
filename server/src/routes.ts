@@ -83,21 +83,19 @@ router.get('/teachers', async (req: Request, res: Response) => {
 	res.json(teachers);
 });
 
+router.get('/teachers/:teacherId', async (req: Request, res: Response) => {
+	const teacherId = Number(req.params.teacherId);
+
+	const reviews = await ratingModel.find({
+		teacher_id: teacherId
+	});
+
+	res.send(reviews);
+});
+
 router.get('/questions/', async (req: Request, res: Response) => {
 	const questions = await questionModel.find();
 	res.json(questions);
-});
-
-router.get('/ratings/students/:studentId', async (req: Request, res: Response) => {
-	const studentId = req.params.studentId;
-	const ratings = await ratingModel.find({ student_id: studentId });
-	res.json(ratings);
-});
-
-router.get('/ratings/teachers/:teacherId', async (req: Request, res: Response) => {
-	const teacherId = req.params.teacherId;
-	const ratings = await ratingModel.find({ teacher_id: teacherId });
-	res.json(ratings);
 });
 
 router.put('/rate', async (req: Request, res: Response) => {
