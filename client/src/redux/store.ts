@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { gradingReducer } from './slices';
+import { studentReducer } from './slices';
 
 export const store = configureStore({
 	reducer: {
-		grading: gradingReducer
+		student: studentReducer
 	}
 });
 

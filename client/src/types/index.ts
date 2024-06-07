@@ -39,3 +39,7 @@ export interface IRating {
 	question_id: number,
 	grade: string
 }
+
+export interface ITeacherRating extends ITeacher {
+	ratings: IRating[];
+}

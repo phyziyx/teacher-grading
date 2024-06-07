@@ -1,39 +1,39 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { api } from "../../utils/api";
-import { IQuestion, IStudent, ITeacher } from "../../types";
+import { IQuestion, IStudent, ITeacherRating } from "../../types";
 
-interface GradingSlice {
+interface StudentSlice {
 	loading: boolean;
 	error: string;
 	students: IStudent[];
 	activeStudent: IStudent | undefined;
+	ratings: ITeacherRating[];
 	questions: IQuestion[];
-	teachers: ITeacher[];
 }
 
-const initialState: GradingSlice = {
+const initialState: StudentSlice = {
 	loading: false,
 	error: "",
 	students: [],
 	activeStudent: undefined,
-	questions: [],
-	teachers: []
+	ratings: [],
+	questions: []
 };
 
 /**
  * Fetches the list of students that exist
  */
-export const getStudents = createAsyncThunk("grading/students", async () => {
+export const getStudentList = createAsyncThunk("grading/students", async () => {
 	const response = await api.get(`/students`);
 	return response.data as IStudent[];
 });
 
 /**
- * Fetches the list of classes and teachers that are related to that student
+ * Fetches the teacher and its reviews for the respective student
  */
-export const getStudent = createAsyncThunk("grading/student", async (id: number) => {
+export const getTeacherReview = createAsyncThunk("grading/review", async (id: number) => {
 	const response = await api.get(`/students/${id}`);
-	return response.data as IStudent;
+	return response.data as ITeacherRating[];
 });
 
 /**
@@ -44,16 +44,16 @@ export const getQuestions = createAsyncThunk("grading/questions", async () => {
 	return response.data as IQuestion[];
 });
 
-/**
- * Fetches the list of all teachers that exist
- */
-export const getTeachers = createAsyncThunk("grading/teachers", async () => {
-	const response = await api.get(`/teachers`);
-	return response.data as ITeacher[];
-});
+// /**
+//  * Fetches the list of all teachers that exist
+//  */
+// export const getTeachers = createAsyncThunk("grading/teachers", async () => {
+// 	const response = await api.get(`/teachers`);
+// 	return response.data as ITeacher[];
+// });
 
-export const gradingSlice = createSlice({
-	name: "grading",
+export const studentSlice = createSlice({
+	name: "student",
 	initialState,
 	reducers: {
 		setActiveStudent: (state, action: PayloadAction<IStudent | undefined>) => {
@@ -62,14 +62,14 @@ export const gradingSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(getStudents.pending, (state) => {
+			.addCase(getStudentList.pending, (state) => {
 				state.loading = true;
 			})
-			.addCase(getStudents.fulfilled, (state, { payload }) => {
+			.addCase(getStudentList.fulfilled, (state, { payload }) => {
 				state.loading = false;
 				state.students = payload;
 			})
-			.addCase(getStudents.rejected, (state, { payload }) => {
+			.addCase(getStudentList.rejected, (state, { payload }) => {
 				state.loading = false;
 				state.error = payload as string;
 			})
@@ -86,19 +86,31 @@ export const gradingSlice = createSlice({
 				state.error = payload as string;
 			})
 			//
-			.addCase(getTeachers.pending, (state) => {
+			// .addCase(getTeachers.pending, (state) => {
+			// 	state.loading = true;
+			// })
+			// .addCase(getTeachers.fulfilled, (state, { payload }) => {
+			// 	state.loading = false;
+			// 	state.teachers = payload;
+			// })
+			// .addCase(getTeachers.rejected, (state, { payload }) => {
+			// 	state.loading = false;
+			// 	state.error = payload as string;
+			// })
+			//
+			.addCase(getTeacherReview.pending, (state) => {
 				state.loading = true;
 			})
-			.addCase(getTeachers.fulfilled, (state, { payload }) => {
+			.addCase(getTeacherReview.fulfilled, (state, { payload }) => {
 				state.loading = false;
-				state.teachers = payload;
+				state.ratings = payload;
 			})
-			.addCase(getTeachers.rejected, (state, { payload }) => {
+			.addCase(getTeacherReview.rejected, (state, { payload }) => {
 				state.loading = false;
 				state.error = payload as string;
 			})
 	},
 });
 
-export const { setActiveStudent } = gradingSlice.actions;
-export const gradingReducer = gradingSlice.reducer;
+export const { setActiveStudent } = studentSlice.actions;
+export const studentReducer = studentSlice.reducer;
