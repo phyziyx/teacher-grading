@@ -19,6 +19,7 @@ const initialState: GradingSlice = {
 	questions: [],
 	teachers: []
 };
+
 /**
  * Fetches the list of students that exist
  */

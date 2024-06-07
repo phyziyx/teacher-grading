@@ -1,6 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { api } from "../utils/api";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getQuestions,
@@ -10,20 +9,24 @@ import {
 } from "../redux/slices";
 import { AppDispatch, RootState } from "../redux/store";
 import { IStudent } from "../types";
+import TeacherReview from "../components/TeacherReview";
 
 function Student() {
   const { loading, students, questions, activeStudent, teachers, error } =
     useSelector((state: RootState) => state.grading);
-
   const dispatch = useDispatch<AppDispatch>();
+
+  const [pending, setPending] = useState(false);
 
   useEffect(() => {
     dispatch(getStudents());
   }, [dispatch]);
 
   useEffect(() => {
+    if (!activeStudent) return;
     dispatch(getQuestions());
     dispatch(getTeachers());
+    setPending(false);
   }, [activeStudent, dispatch]);
 
   const onSelectStudent = (newStudent: IStudent | undefined) => {
@@ -43,13 +46,14 @@ function Student() {
       </h2>
       <select
         key={""}
-        disabled={loading}
+        disabled={pending}
         value={activeStudent?.student_id}
-        onChange={(e) =>
+        onChange={(e) => {
+          setPending(true);
           onSelectStudent(
             students.find((s) => s.student_id === parseInt(e.target.value))
-          )
-        }
+          );
+        }}
       >
         <option key={-1} value={-1} id={"-1"}>
           None
@@ -70,90 +74,12 @@ function Student() {
       ) : (
         teachers.map((teacher) => {
           return (
-            <>
-              <table>
-                <tr>
-                  <th>Teacher Name</th>
-                </tr>
-                <tr>{teacher.name}</tr>
-
-                <tr>
-                  <td>
-                    <table>
-                      <tr>
-                        <th>Question</th>
-                        <th>Choices</th>
-                      </tr>
-                      {questions.map((question) => {
-                        const rate = false;
-                        // ratings &&
-                        // ratings.find(
-                        //   (r) =>
-                        //     r.question_id === question.id &&
-                        //     r.teacher_id === teacher.id
-                        // );
-
-                        return (
-                          <tr key={question.id}>
-                            <td>{question.question}</td>
-                            <td>
-                              <select
-                                key={question.id}
-                                disabled={!!rate}
-                                onChange={async (e) => {
-                                  console.log(e.target.value);
-
-                                  const response = await api.put("/rate", {
-                                    student_id: activeStudent?.student_id,
-                                    teacher_id: teacher.id,
-                                    question_id: question.id,
-                                    grade: parseInt(e.target.value),
-                                  });
-
-                                  // if (response.status === 200) {
-                                  //   setRatings((oldRatings) => [
-                                  //     ...oldRatings,
-                                  //     {
-                                  //       student_id: activeStudent?.id,
-                                  //       teacher_id: teacher.id,
-                                  //       question_id: question.id,
-                                  //       grade: parseInt(e.target.value),
-                                  //     },
-                                  //   ]);
-                                  // }
-                                }}
-                              >
-                                <option
-                                  selected={
-                                    rate === undefined || rate === false
-                                  }
-                                  value={-1}
-                                  key={-1}
-                                >
-                                  Select...
-                                </option>
-                                {question.choices.map((choice, index) => {
-                                  return (
-                                    <option
-                                      selected={rate === false}
-                                      value={index}
-                                      key={index}
-                                    >
-                                      {choice}
-                                    </option>
-                                  );
-                                })}
-                              </select>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </table>
-                  </td>
-                </tr>
-              </table>
-              <br />
-            </>
+            <TeacherReview
+              key={teacher.id}
+              teacher={teacher}
+              activeStudent={activeStudent}
+              questions={questions}
+            />
           );
         })
       )}
