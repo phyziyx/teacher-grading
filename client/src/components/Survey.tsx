@@ -1,9 +1,10 @@
 import Chart from "react-google-charts";
-import { IQuestion, ITeacher } from "../types";
+import { IQuestion, ITeacher, ITeacherRating } from "../types";
 
 interface IProps {
   questions: IQuestion[];
   teacher: ITeacher;
+  reviews: ITeacherRating[];
 }
 
 function Question({
@@ -30,7 +31,7 @@ function Question({
   );
 }
 
-function Survey({ questions }: IProps) {
+function Survey({ questions, reviews }: IProps) {
   // const reviews = questionn.map((question) => {
   //     const teacherRatings = question.choices.map((choice, index) => {
   //       const choiceRating =
@@ -43,12 +44,16 @@ function Survey({ questions }: IProps) {
   //     teacherRatings.push(["No Rating", 1]);
   // console.log(question.id, JSON.stringify(teacherRatings));
 
-  const ratings = [
+  reviews.map((r) => r.ratings);
+
+  const mutatedReviews = [
     ["No Ratings", 1],
     ["Poor", 1],
   ];
 
-  return questions.map((q) => <Question question={q} reviews={ratings} />);
+  return questions.map((q) => (
+    <Question key={q.id} question={q} reviews={mutatedReviews} />
+  ));
 }
 
 export default Survey;

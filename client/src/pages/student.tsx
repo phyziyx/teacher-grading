@@ -2,30 +2,31 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getQuestions,
-  getStudents,
-  getTeachers,
+  getTeacherReview,
+  getStudentList,
   setActiveStudent,
-} from "../redux/slices";
+  getQuestions,
+} from "../redux/slices/student";
 import { AppDispatch, RootState } from "../redux/store";
 import { IStudent } from "../types";
 import TeacherReview from "../components/TeacherReview";
 
 function Student() {
-  const { loading, students, questions, activeStudent, teachers, error } =
-    useSelector((state: RootState) => state.grading);
+  const { ratings, questions, students, activeStudent, error } = useSelector(
+    (state: RootState) => state.student
+  );
   const dispatch = useDispatch<AppDispatch>();
 
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
-    dispatch(getStudents());
+    dispatch(getStudentList());
+    dispatch(getQuestions());
   }, [dispatch]);
 
   useEffect(() => {
     if (!activeStudent) return;
-    dispatch(getQuestions());
-    dispatch(getTeachers());
+    dispatch(getTeacherReview(activeStudent?.student_id));
     setPending(false);
   }, [activeStudent, dispatch]);
 
@@ -69,16 +70,17 @@ function Student() {
       <br />
 
       <h2>Grading</h2>
-      {!teachers || teachers.length === 0 ? (
+      {!ratings || ratings.length === 0 ? (
         <p>You do not have any pending ratings...</p>
       ) : (
-        teachers.map((teacher) => {
+        ratings.map(({ id, name, ratings }) => {
           return (
             <TeacherReview
-              key={teacher.id}
-              teacher={teacher}
+              key={id}
+              teacher={{ id, name }}
               activeStudent={activeStudent}
               questions={questions}
+              ratings={ratings}
             />
           );
         })

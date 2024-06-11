@@ -1,13 +1,15 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { api } from "../../utils/api";
-import { IQuestion, ITeacher } from "../../types";
+import { IClass, IQuestion, ITeacher, ITeacherRating } from "../../types";
 
 interface AdminSlice {
 	loading: boolean;
 	error: string;
 	activeTeacher: ITeacher | undefined;
 	teachers: ITeacher[];
+	classes: IClass[];
 	questions: IQuestion[];
+	reviews: ITeacherRating[];
 }
 
 const initialState: AdminSlice = {
@@ -15,13 +17,15 @@ const initialState: AdminSlice = {
 	error: "",
 	activeTeacher: undefined,
 	teachers: [],
-	questions: []
+	questions: [],
+	classes: [],
+	reviews: []
 };
 
 /**
  * Fetches the set of the questions that the students get to assess their teacher on
  */
-export const getQuestions = createAsyncThunk("grading/questions", async () => {
+export const getQuestions = createAsyncThunk("admin/questions", async () => {
 	const response = await api.get(`/questions`);
 	return response.data as IQuestion[];
 });
@@ -29,9 +33,36 @@ export const getQuestions = createAsyncThunk("grading/questions", async () => {
 /**
  * Fetches the list of all teachers that exist
  */
-export const getTeachers = createAsyncThunk("grading/teachers", async () => {
+export const getTeachers = createAsyncThunk("admin/teachers", async () => {
 	const response = await api.get(`/teachers`);
 	return response.data as ITeacher[];
+});
+
+/**
+ * Fetches the list of all classes that the teacher is offered in or teachers
+ */
+export const getTeacherClasses = createAsyncThunk("admin/classes", async (teacherId: number) => {
+	const response = await api.get(`/classes/${teacherId}`);
+	return response.data as IClass[];
+});
+
+/**
+ * Fetches the list of questions and ratings according to the specified teacher and class IDs
+ */
+interface IData {
+	classId: number;
+	teacherId: number;
+}
+
+export const getTeacherReviewsByClass = createAsyncThunk("admin/reviews", async ({ classId, teacherId }: IData) => {
+	const response = await api.get(`/reviews`, {
+		params: {
+			classId: Number(classId),
+			teacherId: Number(teacherId)
+		}
+	});
+
+	return response.data as ITeacherRating[];
 });
 
 export const adminSlide = createSlice({
@@ -64,6 +95,30 @@ export const adminSlide = createSlice({
 				state.teachers = payload;
 			})
 			.addCase(getTeachers.rejected, (state, { payload }) => {
+				state.loading = false;
+				state.error = payload as string;
+			})
+			//
+			.addCase(getTeacherClasses.pending, (state) => {
+				state.loading = true;
+			})
+			.addCase(getTeacherClasses.fulfilled, (state, { payload }) => {
+				state.loading = false;
+				state.classes = payload;
+			})
+			.addCase(getTeacherClasses.rejected, (state, { payload }) => {
+				state.loading = false;
+				state.error = payload as string;
+			})
+			//
+			.addCase(getTeacherReviewsByClass.pending, (state) => {
+				state.loading = true;
+			})
+			.addCase(getTeacherReviewsByClass.fulfilled, (state, { payload }) => {
+				state.loading = false;
+				state.reviews = payload;
+			})
+			.addCase(getTeacherReviewsByClass.rejected, (state, { payload }) => {
 				state.loading = false;
 				state.error = payload as string;
 			})

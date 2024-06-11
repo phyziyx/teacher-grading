@@ -67,10 +67,10 @@ router.get('/students/:studentId', async (req: Request, res: Response) => {
 		},
 		{
 			$project: {
-				_id: 0,
+				_id: false,
 				id: '$_id',
-				name: 1,
-				ratings: 1
+				name: true,
+				ratings: true
 			},
 		},
 	]);
@@ -93,8 +93,116 @@ router.get('/teachers/:teacherId', async (req: Request, res: Response) => {
 	res.send(reviews);
 });
 
+router.get('/classes/:teacherId', async (req: Request, res: Response) => {
+	const teacherId = Number(req.params.teacherId);
+
+	const classes = await classModel.aggregate([
+		{
+			$lookup: {
+				from: 'assigneds',
+				localField: 'id',
+				foreignField: 'class_id',
+				as: 'assigned',
+				pipeline: [
+					{
+						$match: {
+							teacher_id: teacherId
+						}
+					}
+				]
+			}
+		},
+		{
+			$unwind: '$assigned'
+		},
+		{
+			$project: {
+				'assigned': false
+			}
+		}
+	]);
+
+	// const classes = await assignedModel.aggregate([
+	// 	{
+	// 		$match: {
+	// 			teacher_id: teacherId
+	// 		}
+	// 	},
+	// 	{
+	// 		$lookup: {
+	// 			from: 'classes',
+	// 			localField: 'class_id',
+	// 			foreignField: 'id',
+	// 			as: 'offered'
+	// 		}
+	// 	},
+	// 	{
+	// 		$unwind: '$offered'
+	// 	},
+	// 	{
+	// 		$project: {
+	// 			class_id: true,
+	// 			offered: {
+	// 				id: true,
+	// 				semester: true,
+	// 				section: true
+	// 			}
+	// 		}
+	// 	}
+	// ]);
+
+	console.log(JSON.stringify(classes, undefined, 2));
+	res.send(classes);
+});
+
 router.get('/questions/', async (req: Request, res: Response) => {
 	const questions = await questionModel.find();
+	res.json(questions);
+});
+
+router.get('/reviews/', async (req: Request, res: Response) => {
+	const { classId, teacherId } = req.query;
+
+	if (!classId || !teacherId) {
+		return res.status(400).json({
+			message: 'missing teacherId or classId or both.'
+		});
+	}
+
+	// This is perfect, but we need to get only for students of that class
+	const questions = await questionModel.aggregate([
+		{
+			$lookup: {
+				from: 'ratings',
+				localField: 'id',
+				foreignField: 'question_id',
+				as: 'answers',
+				pipeline: [
+					{
+						$match: {
+							teacher_id: Number(teacherId),
+						}
+					},
+					// {
+					// 	$lookup: {
+					// 		from: 'assigneds',
+					// 		localField: 'class_id',
+					// 		foreignField: 'class_id',
+					// 		as: 'assigneds'
+					// 	}
+					// },
+					{
+						$group: {
+							_id: "$grade",
+							count: {
+								$count: {}
+							},
+						}
+					},
+				]
+			},
+		},
+	]);
 	res.json(questions);
 });
 
