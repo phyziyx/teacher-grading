@@ -1,34 +1,10 @@
-import Chart from "react-google-charts";
 import { IQuestion, ITeacher, ITeacherRating } from "../types";
+import Question from "./Question";
 
 interface IProps {
   questions: IQuestion[];
   teacher: ITeacher;
   reviews: ITeacherRating[];
-}
-
-function Question({
-  question,
-  reviews,
-}: {
-  question: IQuestion;
-  reviews: unknown[];
-}) {
-  return (
-    <div key={question.id}>
-      <h3>{question.question}</h3>
-      <Chart
-        chartType="PieChart"
-        data={[["Rating", "Count"], ...reviews]}
-        width="100%"
-        height="400px"
-        legendToggle
-        options={{
-          sliceVisibilityThreshold: 0,
-        }}
-      />
-    </div>
-  );
 }
 
 function Survey({ questions, reviews }: IProps) {

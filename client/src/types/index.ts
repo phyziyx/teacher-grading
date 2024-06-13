@@ -37,7 +37,7 @@ export interface IRating {
 	student_id: number,
 	teacher_id: number,
 	question_id: number,
-	grade: string
+	grade: number
 }
 
 export interface ITeacherRating extends ITeacher {

@@ -38,27 +38,29 @@ function TeacherReview({ teacher, questions, activeStudent, ratings }: IProps) {
                       <tr key={question.id}>
                         <td>{question.question}</td>
                         <td>
-                          <select
-                            defaultValue={rate ? Number(rate?.grade) : -1}
-                            disabled={!!rate}
-                            onChange={async (e) => {
-                              console.log(e.target.value);
+                          {rate ? (
+                            question.choices[rate.grade]
+                          ) : (
+                            <select
+                              onChange={async (e) => {
+                                // console.log(e.target.value);
 
-                              await api.put("/rate", {
-                                student_id: activeStudent?.student_id,
-                                teacher_id: teacher.id,
-                                question_id: question.id,
-                                grade: parseInt(e.target.value),
-                              });
-                            }}
-                          >
-                            <option value={-1}>Select...</option>
-                            {question.choices.map((choice, index) => (
-                              <option value={index} key={index}>
-                                {choice}
-                              </option>
-                            ))}
-                          </select>
+                                await api.put("/rate", {
+                                  student_id: activeStudent?.student_id,
+                                  teacher_id: teacher.id,
+                                  question_id: question.id,
+                                  grade: parseInt(e.target.value),
+                                });
+                              }}
+                            >
+                              <option value={-1}>Select...</option>
+                              {question.choices.map((choice, index) => (
+                                <option value={index} key={index}>
+                                  {choice}
+                                </option>
+                              ))}
+                            </select>
+                          )}
                         </td>
                       </tr>
                     );
