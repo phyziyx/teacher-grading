@@ -122,36 +122,6 @@ router.get('/classes/:teacherId', async (req: Request, res: Response) => {
 		}
 	]);
 
-	// const classes = await assignedModel.aggregate([
-	// 	{
-	// 		$match: {
-	// 			teacher_id: teacherId
-	// 		}
-	// 	},
-	// 	{
-	// 		$lookup: {
-	// 			from: 'classes',
-	// 			localField: 'class_id',
-	// 			foreignField: 'id',
-	// 			as: 'offered'
-	// 		}
-	// 	},
-	// 	{
-	// 		$unwind: '$offered'
-	// 	},
-	// 	{
-	// 		$project: {
-	// 			class_id: true,
-	// 			offered: {
-	// 				id: true,
-	// 				semester: true,
-	// 				section: true
-	// 			}
-	// 		}
-	// 	}
-	// ]);
-
-	console.log(JSON.stringify(classes, undefined, 2));
 	res.send(classes);
 });
 
@@ -169,8 +139,12 @@ router.get('/reviews/', async (req: Request, res: Response) => {
 		});
 	}
 
-	// This is perfect, but we need to get only for students of that class
-	const questions = await questionModel.aggregate([
+	const studentsInClass = await enrollmentModel.find({
+		class_id: Number(classId)
+	}).select('student_id').exec();
+	const studentIds = studentsInClass.map(enrollment => enrollment.student_id);
+
+	const reviews = await questionModel.aggregate([
 		{
 			$lookup: {
 				from: 'ratings',
@@ -181,16 +155,9 @@ router.get('/reviews/', async (req: Request, res: Response) => {
 					{
 						$match: {
 							teacher_id: Number(teacherId),
+							student_id: { $in: studentIds }
 						}
 					},
-					// {
-					// 	$lookup: {
-					// 		from: 'assigneds',
-					// 		localField: 'class_id',
-					// 		foreignField: 'class_id',
-					// 		as: 'assigneds'
-					// 	}
-					// },
 					{
 						$group: {
 							_id: "$grade",
@@ -199,11 +166,23 @@ router.get('/reviews/', async (req: Request, res: Response) => {
 							},
 						}
 					},
+					{
+						$project: {
+							grade: '$_id',
+							count: true
+						}
+					}
 				]
-			},
-		},
+			}
+		}
 	]);
-	res.json(questions);
+
+	const totalStudents = studentIds.length;
+	const result = reviews.map(q => ({
+		...q, rated: q.answers.length, unrated: totalStudents - q.answers.length
+	}));
+
+	res.json(result);
 });
 
 router.put('/rate', async (req: Request, res: Response) => {

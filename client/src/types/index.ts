@@ -43,3 +43,18 @@ export interface IRating {
 export interface ITeacherRating extends ITeacher {
 	ratings: IRating[];
 }
+
+export interface ITeacherReview {
+	id: number
+	question: string
+	choices: string[],
+	answers: {
+		_id: string
+		count: number
+		grade: string
+	}[],
+	rated: number
+	unrated: number
+}
+
+export type ChartDataset = (number | string)[][];

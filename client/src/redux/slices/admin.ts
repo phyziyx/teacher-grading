@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { api } from "../../utils/api";
-import { IClass, IQuestion, ITeacher, ITeacherRating } from "../../types";
+import { IClass, IQuestion, ITeacher, ITeacherReview } from "../../types";
 
 interface AdminSlice {
 	loading: boolean;
@@ -9,7 +9,7 @@ interface AdminSlice {
 	teachers: ITeacher[];
 	classes: IClass[];
 	questions: IQuestion[];
-	reviews: ITeacherRating[];
+	reviews: ITeacherReview[];
 }
 
 const initialState: AdminSlice = {
@@ -62,7 +62,7 @@ export const getTeacherReviewsByClass = createAsyncThunk("admin/reviews", async 
 		}
 	});
 
-	return response.data as ITeacherRating[];
+	return response.data as ITeacherReview[];
 });
 
 export const adminSlide = createSlice({

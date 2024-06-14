@@ -1,9 +1,9 @@
 import Chart from "react-google-charts";
-import { IQuestion } from "../types";
+import { ChartDataset, IQuestion } from "../types";
 
 interface IProps {
   question: IQuestion;
-  reviews: unknown[];
+  reviews: ChartDataset;
 }
 
 const Question = ({ question, reviews }: IProps) => (
