@@ -3,27 +3,58 @@ import { RouteObject } from "react-router-dom";
 export type MyRouteObject = { name: string } & RouteObject;
 
 export interface IQuestion {
-	id: number;
-	question: string;
-	choices: string[];
+	id: number,
+	question: string,
+	choices: string[]
 }
-
 export interface IStudent {
-	student_id: number;
-	first_name: string;
-	last_name: string;
+	student_id: number,
+	name: string,
+	regno: string
 }
 
 export interface ITeacher {
-	id: number;
-	first_name: string;
-	last_name: string;
-	subject: string;
-	grade?: number;
+	id: number,
+	name: string,
+}
+
+export interface IClass {
+	id: number,
+	semester: number,
+	section: string
+}
+
+export interface IAssigned {
+	teacher_id: number,
+	class_id: number
+}
+export interface IEnrolled {
+	student_id: number,
+	class_id: number
 }
 
 export interface IRating {
-	teacher_id: number;
-	question_id: number;
-	grade: number;
+	student_id: number,
+	teacher_id: number,
+	question_id: number,
+	grade: number
 }
+
+export interface ITeacherRating extends ITeacher {
+	ratings: IRating[];
+}
+
+export interface ITeacherReview {
+	id: number
+	question: string
+	choices: string[],
+	answers: {
+		_id: string
+		count: number
+		grade: string
+	}[],
+	rated: number
+	unrated: number
+}
+
+export type ChartDataset = (number | string)[][];
