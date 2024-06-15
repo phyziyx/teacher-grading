@@ -1,6 +1,6 @@
 import { RouteObject } from "react-router-dom";
 
-export type MyRouteObject = { name: string; shown?: boolean; } & RouteObject;
+export type MyRouteObject = { name: string; hidden?: boolean; } & RouteObject;
 
 export interface IQuestion {
 	id: number,

@@ -8,7 +8,7 @@ const routes: MyRouteObject[] = [
     name: "Home",
     path: "/",
     element: <Home />,
-    shown: false,
+    hidden: true,
   },
   {
     name: "Admin Panel",
