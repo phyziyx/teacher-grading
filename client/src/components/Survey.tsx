@@ -13,14 +13,15 @@ function Survey({ questions, reviews }: IProps) {
 
     const mutatedReviews = foundReview
       ? [
-          ...foundReview.choices.map((c, choiceIdx) => [
-            c,
-            foundReview.answers.filter((a) => Number(a.grade) === choiceIdx)
-              .length,
-          ]),
-          ["No Ratings", foundReview.unrated],
+          ...foundReview.choices.map((c, choiceIdx) => {
+            const reviewCount = foundReview.answers.filter(
+              (a) => Number(a.grade) === choiceIdx
+            ).length;
+            return [`${c} (${reviewCount})`, reviewCount];
+          }),
+          [`No Ratings (${foundReview.unrated})`, foundReview.unrated],
         ]
-      : [["No Ratings", 1]];
+      : [["No Ratings (1)", 1]];
 
     return <Question key={q.id} question={q} reviews={mutatedReviews} />;
   });

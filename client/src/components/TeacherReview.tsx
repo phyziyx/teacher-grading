@@ -10,7 +10,7 @@ interface IProps {
 
 function TeacherReview({ teacher, questions, activeStudent, ratings }: IProps) {
   return (
-    <table className="table is-striped">
+    <table className="table is-striped mx-auto">
       <thead>
         <tr>
           <th className="subtitle" colSpan={2}>
