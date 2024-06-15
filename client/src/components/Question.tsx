@@ -8,7 +8,9 @@ interface IProps {
 
 const Question = ({ question, reviews }: IProps) => (
   <div key={question.id}>
-    <h3>{question.question}</h3>
+    <h3 className="subtitle">
+      {question.id}. {question.question}
+    </h3>
     <Chart
       chartType="PieChart"
       data={[["Rating", "Count"], ...reviews]}

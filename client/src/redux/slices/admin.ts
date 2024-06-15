@@ -76,6 +76,9 @@ export const adminSlide = createSlice({
 		},
 		setActiveClass: (state, action: PayloadAction<IClass | undefined>) => {
 			state.activeClass = action.payload;
+		},
+		resetActiveClass: (state) => {
+			state.activeClass = undefined;
 		}
 	},
 	extraReducers: (builder) => {
@@ -130,5 +133,5 @@ export const adminSlide = createSlice({
 	},
 });
 
-export const { setActiveTeacher, setActiveClass } = adminSlide.actions;
+export const { setActiveTeacher, setActiveClass, resetActiveClass } = adminSlide.actions;
 export const adminReducer = adminSlide.reducer;

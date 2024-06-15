@@ -1,4 +1,3 @@
-import { Fragment } from "react/jsx-runtime";
 import { ITeacher, IQuestion, IStudent, IRating } from "../types";
 import api from "../utils/api";
 
@@ -11,36 +10,38 @@ interface IProps {
 
 function TeacherReview({ teacher, questions, activeStudent, ratings }: IProps) {
   return (
-    <Fragment key={teacher.id}>
-      <table>
-        <thead>
-          <tr>
-            <th colSpan={2}>{teacher.name}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Question</th>
-                    <th>Choices</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {questions.map((question) => {
-                    const rate =
-                      ratings &&
-                      ratings.find((r) => r.question_id === question.id);
+    <table className="table is-striped">
+      <thead>
+        <tr>
+          <th className="subtitle" colSpan={2}>
+            {teacher.name}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <table className="table is-bordered  is-striped">
+              <thead>
+                <tr>
+                  <th>Question</th>
+                  <th>Choices</th>
+                </tr>
+              </thead>
+              <tbody>
+                {questions.map((question) => {
+                  const rate =
+                    ratings &&
+                    ratings.find((r) => r.question_id === question.id);
 
-                    return (
-                      <tr key={question.id}>
-                        <td>{question.question}</td>
-                        <td>
-                          {rate ? (
-                            question.choices[rate.grade]
-                          ) : (
+                  return (
+                    <tr key={question.id}>
+                      <td>{question.question}</td>
+                      <td>
+                        {rate ? (
+                          question.choices[rate.grade]
+                        ) : (
+                          <div className="select">
                             <select
                               onChange={async (e) => {
                                 await api.put("/rate", {
@@ -58,19 +59,18 @@ function TeacherReview({ teacher, questions, activeStudent, ratings }: IProps) {
                                 </option>
                               ))}
                             </select>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <br />
-    </Fragment>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   );
 }
 

@@ -8,15 +8,16 @@ const routes: MyRouteObject[] = [
     name: "Home",
     path: "/",
     element: <Home />,
+    shown: false,
   },
   {
     name: "Admin Panel",
-    path: "admin",
+    path: "/admin",
     element: <Admin />,
   },
   {
     name: "Student Panel",
-    path: "student",
+    path: "/student",
     element: <Student />,
   },
 ] as const;
