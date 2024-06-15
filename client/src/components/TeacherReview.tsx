@@ -1,6 +1,6 @@
 import { Fragment } from "react/jsx-runtime";
 import { ITeacher, IQuestion, IStudent, IRating } from "../types";
-import { api } from "../utils/api";
+import api from "../utils/api";
 
 interface IProps {
   teacher: ITeacher;
@@ -43,8 +43,6 @@ function TeacherReview({ teacher, questions, activeStudent, ratings }: IProps) {
                           ) : (
                             <select
                               onChange={async (e) => {
-                                // console.log(e.target.value);
-
                                 await api.put("/rate", {
                                   student_id: activeStudent?.student_id,
                                   teacher_id: teacher.id,

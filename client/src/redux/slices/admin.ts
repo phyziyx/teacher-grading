@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { api } from "../../utils/api";
+import api from "../../utils/api";
 import { IClass, IQuestion, ITeacher, ITeacherReview } from "../../types";
 
 interface AdminSlice {
 	loading: boolean;
 	error: string;
 	activeTeacher: ITeacher | undefined;
+	activeClass: IClass | undefined;
 	teachers: ITeacher[];
 	classes: IClass[];
 	questions: IQuestion[];
@@ -16,6 +17,7 @@ const initialState: AdminSlice = {
 	loading: false,
 	error: "",
 	activeTeacher: undefined,
+	activeClass: undefined,
 	teachers: [],
 	questions: [],
 	classes: [],
@@ -71,6 +73,9 @@ export const adminSlide = createSlice({
 	reducers: {
 		setActiveTeacher: (state, action: PayloadAction<ITeacher | undefined>) => {
 			state.activeTeacher = action.payload;
+		},
+		setActiveClass: (state, action: PayloadAction<IClass | undefined>) => {
+			state.activeClass = action.payload;
 		}
 	},
 	extraReducers: (builder) => {
@@ -125,5 +130,5 @@ export const adminSlide = createSlice({
 	},
 });
 
-export const { setActiveTeacher } = adminSlide.actions;
+export const { setActiveTeacher, setActiveClass } = adminSlide.actions;
 export const adminReducer = adminSlide.reducer;

@@ -76,7 +76,7 @@ function Student() {
         ratings.map(({ id, name, ratings }) => {
           return (
             <TeacherReview
-              key={id}
+              key={`${activeStudent?.regno}_${id}`}
               teacher={{ id, name }}
               activeStudent={activeStudent}
               questions={questions}

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
@@ -7,19 +7,33 @@ import {
   getTeachers,
   getQuestions,
   setActiveTeacher,
+  setActiveClass,
   getTeacherReviewsByClass,
 } from "../redux/slices/admin";
 import Survey from "../components/Survey";
 
 function Admin() {
-  const { reviews, classes, activeTeacher, questions, teachers } = useSelector(
-    (state: RootState) => state.admin
-  );
+  const { reviews, classes, activeTeacher, activeClass, questions, teachers } =
+    useSelector((state: RootState) => state.admin);
   const dispatch = useDispatch<AppDispatch>();
+
+  const updateReviews = useCallback(() => {
+    dispatch(getQuestions());
+    dispatch(
+      getTeacherReviewsByClass({
+        teacherId: activeTeacher?.id as number,
+        classId: Number(activeClass?.id),
+      })
+    );
+  }, [activeTeacher, activeClass, dispatch]);
 
   useEffect(() => {
     dispatch(getTeachers());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (activeTeacher && activeClass) updateReviews();
+  }, [activeClass, activeTeacher, updateReviews]);
 
   const onSelectTeacher = (teacherId: string) => {
     const selectedTeacher = teachers.find(
@@ -31,13 +45,7 @@ function Admin() {
   };
 
   const onSelectClass = (classId: string) => {
-    dispatch(getQuestions());
-    dispatch(
-      getTeacherReviewsByClass({
-        teacherId: activeTeacher?.id as number,
-        classId: Number(classId),
-      })
-    );
+    dispatch(setActiveClass(classes.find((c) => c.id === Number(classId))));
   };
 
   return (
@@ -71,11 +79,21 @@ function Admin() {
           </select>
 
           {reviews && (
-            <Survey
-              reviews={reviews}
-              questions={questions}
-              teacher={activeTeacher}
-            />
+            <>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  updateReviews();
+                }}
+              >
+                <u>Refresh</u>
+              </button>
+              <Survey
+                reviews={reviews}
+                questions={questions}
+                teacher={activeTeacher}
+              />
+            </>
           )}
         </>
       ) : (
