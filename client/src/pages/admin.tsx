@@ -1,5 +1,4 @@
 import { useCallback, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import {
@@ -12,6 +11,8 @@ import {
   resetActiveClass,
 } from "../redux/slices/admin";
 import Survey from "../components/Survey";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 function Admin() {
   const { reviews, classes, activeTeacher, activeClass, questions, teachers } =
@@ -48,10 +49,8 @@ function Admin() {
 
   return (
     <section className="section">
+      <Navbar />
       <div className="container has-text-centered">
-        <nav>
-          <Link to="/">Back</Link>
-        </nav>
         <h1 className="title">Admin Panel</h1>
         <hr />
         <h2 className="title">Teachers</h2>
@@ -116,6 +115,8 @@ function Admin() {
           </em>
         )}
       </div>
+
+      <Footer />
     </section>
   );
 }

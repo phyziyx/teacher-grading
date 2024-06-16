@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getTeacherReview,
@@ -10,6 +9,8 @@ import {
 import { AppDispatch, RootState } from "../redux/store";
 import { IStudent } from "../types";
 import TeacherReview from "../components/TeacherReview";
+import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 
 function Student() {
   const { ratings, questions, students, activeStudent } = useSelector(
@@ -36,12 +37,11 @@ function Student() {
 
   return (
     <section className="section">
+      <Navbar />
+
       <div className="container has-text-centered">
-        <nav>
-          <Link to="/">Back</Link>
-        </nav>
         <h1 className="title">Student Panel</h1>
-        <hr />
+        <hr className="navbar-divider" />
         <div className="select">
           <select
             key={""}
@@ -85,6 +85,8 @@ function Student() {
           })
         )}
       </div>
+
+      <Footer />
     </section>
   );
 }
