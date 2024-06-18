@@ -57,4 +57,8 @@ export interface ITeacherReview {
 	unrated: number
 }
 
+export interface IStudentEnrollment extends IStudent {
+	enrollment?: IClass;
+}
+
 export type ChartDataset = (number | string)[][];

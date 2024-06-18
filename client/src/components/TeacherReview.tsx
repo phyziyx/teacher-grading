@@ -13,15 +13,16 @@ function TeacherReview({ teacher, questions, activeStudent, ratings }: IProps) {
     <table className="table is-striped mx-auto">
       <thead>
         <tr>
-          <th className="subtitle" colSpan={2}>
+          <th className="subtitle is-justify-content-right	" colSpan={2}>
             {teacher.name}
+            {/* <button className="button is-light is-danger">Clear</button> */}
           </th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>
-            <table className="table is-bordered  is-striped">
+            <table className="table is-bordered is-striped">
               <thead>
                 <tr>
                   <th>Question</th>

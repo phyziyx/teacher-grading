@@ -68,21 +68,27 @@ function Student() {
         </div>
         <hr />
 
-        <h2 className="title">Grading</h2>
-        {!ratings || ratings.length === 0 ? (
-          <p>You do not have any pending ratings...</p>
+        {pending ? (
+          "Loading..."
         ) : (
-          ratings.map(({ id, name, ratings }) => {
-            return (
-              <TeacherReview
-                key={`${activeStudent?.regno}_${id}`}
-                teacher={{ id, name }}
-                activeStudent={activeStudent}
-                questions={questions}
-                ratings={ratings}
-              />
-            );
-          })
+          <>
+            <h2 className="title">Grading</h2>
+            {!ratings || ratings.length === 0 ? (
+              <p>You do not have any pending ratings...</p>
+            ) : (
+              ratings.map(({ id, name, ratings }) => {
+                return (
+                  <TeacherReview
+                    key={`${activeStudent?.regno}_${id}`}
+                    teacher={{ id, name }}
+                    activeStudent={activeStudent}
+                    questions={questions}
+                    ratings={ratings}
+                  />
+                );
+              })
+            )}
+          </>
         )}
       </div>
 

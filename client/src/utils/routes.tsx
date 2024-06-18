@@ -2,6 +2,7 @@ import Home from "../pages/Home";
 import Admin from "../pages/Admin";
 import Student from "../pages/Student";
 import { MyRouteObject } from "../types";
+import Enrollments from "../pages/Enrollments";
 
 const routes: MyRouteObject[] = [
   {
@@ -19,6 +20,11 @@ const routes: MyRouteObject[] = [
     name: "Student Panel",
     path: "/student",
     element: <Student />,
+  },
+  {
+    name: "Enrollments Panel",
+    path: "/enrollments",
+    element: <Enrollments />,
   },
 ] as const;
 

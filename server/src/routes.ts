@@ -3,7 +3,7 @@ import { studentModel, questionModel, classModel, teacherModel, ratingModel, enr
 
 const router = express.Router();
 
-router.get('/students/', async (req: Request, res: Response) => {
+router.get('/students', async (req: Request, res: Response) => {
 	const students = await studentModel.find();
 	res.send(students);
 });
@@ -93,6 +93,11 @@ router.get('/teachers/:teacherId', async (req: Request, res: Response) => {
 	res.send(reviews);
 });
 
+router.get('/classes/', async (req: Request, res: Response) => {
+	const classes = await classModel.find();
+	res.send(classes);
+});
+
 router.get('/classes/:teacherId', async (req: Request, res: Response) => {
 	const teacherId = Number(req.params.teacherId);
 
@@ -128,6 +133,54 @@ router.get('/classes/:teacherId', async (req: Request, res: Response) => {
 router.get('/questions/', async (req: Request, res: Response) => {
 	const questions = await questionModel.find();
 	res.json(questions);
+});
+
+router.get('/enrollments', async (req: Request, res: Response) => {
+	const enrollments = await studentModel.aggregate([
+		{
+			$lookup: {
+				from: 'enrollments',
+				localField: 'student_id',
+				foreignField: 'student_id',
+				as: 'enrollments',
+			}
+		},
+		{
+			$unwind: {
+				path: '$enrollments',
+				preserveNullAndEmptyArrays: true,
+			}
+		},
+		{
+			$lookup: {
+				from: 'classes',
+				localField: 'enrollments.class_id',
+				foreignField: 'id',
+				as: 'class'
+			},
+		},
+		{
+			$unwind: {
+				path: '$class',
+				preserveNullAndEmptyArrays: true,
+			},
+		},
+		{
+			$project: {
+				_id: false,
+				student_id: true,
+				regno: true,
+				name: true,
+				enrollment: '$class',
+			}
+		},
+		{
+			$sort: {
+				student_id: 1,
+			},
+		},
+	]);
+	res.json(enrollments);
 });
 
 router.get('/reviews/', async (req: Request, res: Response) => {
@@ -199,6 +252,20 @@ router.put('/rate', async (req: Request, res: Response) => {
 	});
 
 	res.json(rating);
+});
+
+router.put('/enrollments/', async (req: Request, res: Response) => {
+	const { student_id, class_id } = req.body;
+
+	const enrollment = await enrollmentModel.updateOne({
+		student_id,
+	}, {
+		class_id
+	}, {
+		upsert: true
+	});
+
+	res.json(enrollment);
 });
 
 export default router;

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "../../utils/api";
-import { IClass, IQuestion, ITeacher, ITeacherReview } from "../../types";
+import { IClass, IQuestion, IStudentEnrollment, ITeacher, ITeacherReview } from "../../types";
 
 interface AdminSlice {
 	loading: boolean;
@@ -11,6 +11,7 @@ interface AdminSlice {
 	classes: IClass[];
 	questions: IQuestion[];
 	reviews: ITeacherReview[];
+	students: IStudentEnrollment[];
 }
 
 const initialState: AdminSlice = {
@@ -21,8 +22,17 @@ const initialState: AdminSlice = {
 	teachers: [],
 	questions: [],
 	classes: [],
-	reviews: []
+	reviews: [],
+	students: []
 };
+
+/**
+ * Fetches the list of students that exist
+ */
+export const getStudentList = createAsyncThunk("admin/enrollments", async () => {
+	const response = await api.get(`/enrollments`);
+	return response.data as IStudentEnrollment[];
+});
 
 /**
  * Fetches the set of the questions that the students get to assess their teacher on
@@ -43,8 +53,8 @@ export const getTeachers = createAsyncThunk("admin/teachers", async () => {
 /**
  * Fetches the list of all classes that the teacher is offered in or teachers
  */
-export const getTeacherClasses = createAsyncThunk("admin/classes", async (teacherId: number) => {
-	const response = await api.get(`/classes/${teacherId}`);
+export const getTeacherClasses = createAsyncThunk("admin/classes", async (teacherId?: number) => {
+	const response = await api.get(`/classes/${teacherId ? teacherId : ""}`);
 	return response.data as IClass[];
 });
 
@@ -79,7 +89,17 @@ export const adminSlide = createSlice({
 		},
 		resetActiveClass: (state) => {
 			state.activeClass = undefined;
-		}
+		},
+		assignStudentClass: (state, action: PayloadAction<{ studentId: number; classData: IClass }>) => {
+			state.students = state.students.map((student) => {
+				if (student.student_id === action.payload.studentId) {
+					return {
+						...student, enrollment: action.payload.classData
+					};
+				}
+				return student;
+			});
+		},
 	},
 	extraReducers: (builder) => {
 		builder
@@ -130,8 +150,20 @@ export const adminSlide = createSlice({
 				state.loading = false;
 				state.error = payload as string;
 			})
+			//
+			.addCase(getStudentList.pending, (state) => {
+				state.loading = true;
+			})
+			.addCase(getStudentList.fulfilled, (state, { payload }) => {
+				state.loading = false;
+				state.students = payload;
+			})
+			.addCase(getStudentList.rejected, (state, { payload }) => {
+				state.loading = false;
+				state.error = payload as string;
+			})
 	},
 });
 
-export const { setActiveTeacher, setActiveClass, resetActiveClass } = adminSlide.actions;
+export const { setActiveTeacher, setActiveClass, resetActiveClass, assignStudentClass } = adminSlide.actions;
 export const adminReducer = adminSlide.reducer;
