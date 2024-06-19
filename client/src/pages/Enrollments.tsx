@@ -10,6 +10,7 @@ import {
 } from "../redux/slices/admin";
 import api from "../utils/api";
 import { IClass } from "../types";
+import { useSearchParams } from "react-router-dom";
 
 interface INotification {
   message: string;
@@ -20,12 +21,49 @@ function Enrollments() {
   const { students, classes } = useSelector((state: RootState) => state.admin);
   const dispatch = useDispatch<AppDispatch>();
   const [notification, setNotification] = useState<INotification | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const prevSort = searchParams.get("sort") || "asc";
+  const prevCategory = searchParams.get("category") || "student_id";
+
+  const getSortIcon = (category: string) => {
+    if (prevCategory === category) {
+      return prevSort === "asc" ? "▲" : "▼";
+    }
+    return "↕";
+  };
 
   useEffect(() => {
     dispatch(getTeacherClasses());
     dispatch(getStudentList());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    dispatch(
+      getStudentList({
+        category: searchParams.get("category") as
+          | "student_id"
+          | "regno"
+          | "name"
+          | undefined,
+        sort: searchParams.get("sort") as "asc" | "desc" | undefined,
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  const sortBy = (category: string) => {
+    setSearchParams({
+      sort:
+        prevCategory === category
+          ? prevSort === "asc"
+            ? "desc"
+            : "asc"
+          : "desc",
+      category,
+    });
+  };
 
   const onChangeStudentClass = (studentId: number, classId: number) => {
     api
@@ -76,9 +114,30 @@ function Enrollments() {
           <h2 className="title">Students</h2>
           <table className="table is-bordered is-striped is-fullwidth mx-auto">
             <thead>
-              <th>ID</th>
-              <th>Reg. No</th>
-              <th>Student Name</th>
+              <th
+                onClick={() => sortBy("student_id")}
+                style={{
+                  cursor: "pointer",
+                }}
+              >
+                ID {getSortIcon("student_id")}
+              </th>
+              <th
+                onClick={() => sortBy("regno")}
+                style={{
+                  cursor: "pointer",
+                }}
+              >
+                Reg. No {getSortIcon("regno")}
+              </th>
+              <th
+                onClick={() => sortBy("name")}
+                style={{
+                  cursor: "pointer",
+                }}
+              >
+                Student Name {getSortIcon("name")}
+              </th>
               <th>Assigned Class</th>
             </thead>
             <tbody>

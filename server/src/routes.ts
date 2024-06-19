@@ -136,6 +136,16 @@ router.get('/questions/', async (req: Request, res: Response) => {
 });
 
 router.get('/enrollments', async (req: Request, res: Response) => {
+	const validateCategory = (category: string) => {
+		category = Array.isArray(category) ? category[0] : category;
+		const validCategories = ['student_id', 'regno', 'name'];
+		if (!category || !validCategories.includes(category)) return 'student_id';
+		return category;
+	};
+
+	const sort = (typeof req.query.sort !== 'string' ? 'asc' : req.query.sort.toLowerCase()) === 'desc' ? -1 : 1;
+	const category = validateCategory(typeof req.query.category !== 'string' ? 'student_id' : req.query.category.toLowerCase());
+
 	const enrollments = await studentModel.aggregate([
 		{
 			$lookup: {
@@ -176,7 +186,7 @@ router.get('/enrollments', async (req: Request, res: Response) => {
 		},
 		{
 			$sort: {
-				student_id: 1,
+				[category]: sort
 			},
 		},
 	]);

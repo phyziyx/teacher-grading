@@ -29,8 +29,18 @@ const initialState: AdminSlice = {
 /**
  * Fetches the list of students that exist
  */
-export const getStudentList = createAsyncThunk("admin/enrollments", async () => {
-	const response = await api.get(`/enrollments`);
+interface IStudentEnrollmentData {
+	sort: 'asc' | 'desc' | undefined;
+	category: 'student_id' | 'regno' | 'name' | undefined;
+}
+
+export const getStudentList = createAsyncThunk("admin/enrollments", async (data?: IStudentEnrollmentData) => {
+	const response = await api.get(`/enrollments`, {
+		params: {
+			sort: data?.sort,
+			category: data?.category
+		}
+	});
 	return response.data as IStudentEnrollment[];
 });
 
