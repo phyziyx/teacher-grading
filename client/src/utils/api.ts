@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const api = axios.create({
-	baseURL: process.env.API_URL || "http://localhost:3000",
+	baseURL: import.meta.env.API_URL,
 });
 
 export default api;
