@@ -22,3 +22,5 @@ mongoose.connect(process.env.MONGODB_URL || 'mongodb://localhost:27017/project')
 }).catch((error) => {
 	console.error(error);
 });
+
+export default app;
