@@ -11,43 +11,43 @@ const assigneds = 'assigneds';
 db.getCollection(assigneds).insertMany([
 	{
 		"class_id": 1,
-		"teacher_id": 1,
+		"teacher_id": 1
 	},
 	{
 		"class_id": 1,
-		"teacher_id": 2,
+		"teacher_id": 2
 	},
 	{
 		"class_id": 2,
-		"teacher_id": 2,
+		"teacher_id": 2
 	},
 	{
 		"class_id": 2,
-		"teacher_id": 3,
+		"teacher_id": 3
 	},
 	{
 		"class_id": 3,
-		"teacher_id": 3,
+		"teacher_id": 3
 	},
 	{
 		"class_id": 3,
-		"teacher_id": 4,
+		"teacher_id": 4
 	},
 	{
 		"class_id": 4,
-		"teacher_id": 4,
+		"teacher_id": 4
 	},
 	{
 		"class_id": 4,
-		"teacher_id": 5,
+		"teacher_id": 5
 	},
 	{
 		"class_id": 5,
-		"teacher_id": 5,
+		"teacher_id": 5
 	},
 	{
 		"class_id": 5,
-		"teacher_id": 1,
+		"teacher_id": 1
 	}
 ]);
 
@@ -172,44 +172,24 @@ db.getCollection(classes).insertMany([
 const enrollments = 'enrollments';
 db.getCollection(enrolled).insertMany([
 	{
+		"student_id": 5,
+		"class_id": 1
+	},
+	{
 		"student_id": 1,
 		"class_id": 1
 	},
 	{
-		"student_id": 1,
-		"class_id": 2
-	},
-	{
 		"student_id": 2,
-		"class_id": 2
-	},
-	{
-		"student_id": 2,
-		"class_id": 3
+		"class_id": 1,
 	},
 	{
 		"student_id": 3,
-		"class_id": 3
-	},
-	{
-		"student_id": 3,
-		"class_id": 4
-	},
-	{
-		"student_id": 4,
-		"class_id": 4
-	},
-	{
-		"student_id": 4,
-		"class_id": 5
-	},
-	{
-		"student_id": 5,
-		"class_id": 5
-	},
-	{
-		"student_id": 5,
 		"class_id": 1
+	},
+	{
+		"student_id": 4,
+		"class_id": 2
 	}
 ]);
 

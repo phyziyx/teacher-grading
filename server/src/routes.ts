@@ -240,10 +240,14 @@ router.get('/reviews/', async (req: Request, res: Response) => {
 		}
 	]);
 
+	const reviewCounts = reviews.map(q => ({ id: q.id, count: q.answers.map((a: any) => a.count).reduce((a: number, b: number) => a + b, 0) }));
 	const totalStudents = studentIds.length;
-	const result = reviews.map(q => ({
-		...q, rated: q.answers.length, unrated: totalStudents - q.answers.length
-	}));
+	const result = reviews.map(q => {
+		const count = reviewCounts.find(r => r.id === q.id)?.count || 0;
+		return {
+			...q, rated: count, unrated: totalStudents - count
+		}
+	});
 
 	res.json(result);
 });
